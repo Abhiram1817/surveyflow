@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SurveyFlow – Online Survey & Poll Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --navy: #0D1F4E;
+  --navy-dark: #07152E;
+  --teal: #0E7C86;
+  --teal-lt: #14A5B0;
+  --teal-glow: rgba(14,124,134,0.18);
+  --white: #fff;
+  --off: #F0F4F8;
+  --muted: #8CA0B5;
+  --dark: #1A2E44;
+  --card: #fff;
+  --shadow: 0 4px 24px rgba(13,31,78,0.10);
+  --shadow-hover: 0 8px 40px rgba(13,31,78,0.18);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font: 'Sora', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:#f8fafc;color:var(--dark);min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(13,31,78,0.97);backdrop-filter:blur(16px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.5rem;height:66px;
+  border-bottom:1px solid rgba(14,124,134,0.3);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;color:#fff;font-family:var(--font);font-size:1.15rem;font-weight:700;text-decoration:none;cursor:pointer}
+.nav-logo-dot{width:10px;height:10px;border-radius:50%;background:var(--teal-lt);box-shadow:0 0 8px var(--teal-lt)}
+.nav-links{display:flex;gap:1.8rem;list-style:none}
+.nav-links a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:.88rem;font-weight:400;transition:color .2s;letter-spacing:.02em;cursor:pointer}
+.nav-links a:hover{color:#fff}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.nav-user{display:none;align-items:center;gap:.7rem;color:rgba(255,255,255,0.85);font-size:.88rem}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.8rem;color:#fff}
+.nav-cta{background:var(--teal);color:#fff;border:none;padding:.5rem 1.25rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:background .2s}
+.nav-cta:hover{background:var(--teal-lt)}
+.logout-btn{background:transparent;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.2);padding:.35rem .9rem;border-radius:var(--radius-sm);font-size:.8rem;cursor:pointer;transition:all .2s;font-family:var(--font)}
+.logout-btn:hover{color:#fff;border-color:rgba(255,255,255,0.5)}
+
+/* PAGES */
+.page{display:none;padding-top:66px;min-height:100vh}
+.page.active{display:block}
+
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,#1a3a6e 100%);
+  min-height:calc(100vh - 66px);display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:5rem 2rem;position:relative;overflow:hidden;
+}
+.hero-orb{position:absolute;border-radius:50%;opacity:.12;pointer-events:none}
+.hero-orb-1{width:500px;height:500px;background:var(--teal);top:-150px;right:-100px}
+.hero-orb-2{width:300px;height:300px;background:var(--teal-lt);bottom:-80px;left:-60px}
+.hero-orb-3{width:180px;height:180px;background:#4472C4;top:40%;left:10%}
+.hero-inner{position:relative;z-index:1;max-width:780px}
+.hero-badge{
+  display:inline-block;background:rgba(14,165,176,0.18);border:1px solid rgba(14,165,176,0.4);
+  color:var(--teal-lt);font-family:var(--font);font-size:.78rem;font-weight:600;
+  padding:.35rem 1rem;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.8rem
+}
+.hero h1{font-family:var(--font);font-size:3.6rem;font-weight:800;color:#fff;line-height:1.12;margin-bottom:1.2rem;letter-spacing:-.03em}
+.hero h1 span{color:var(--teal-lt)}
+.hero p{font-size:1.1rem;color:rgba(255,255,255,0.7);line-height:1.7;max-width:560px;margin:0 auto 2.5rem}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--teal);color:#fff;border:none;padding:.85rem 2rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.92rem;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-primary:hover{background:var(--teal-lt);transform:translateY(-2px);box-shadow:0 6px 20px rgba(14,124,134,0.4)}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.4);padding:.85rem 2rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.92rem;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,0.08)}
+
+/* STATS */
+.stats{background:var(--navy);padding:2rem 3rem;display:flex;justify-content:center;gap:5rem;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font);font-size:2rem;font-weight:700;color:var(--teal-lt)}
+.stat-lbl{font-size:.78rem;color:rgba(255,255,255,0.45);margin-top:.2rem;text-transform:uppercase;letter-spacing:.08em}
+
+/* SECTION */
+.section{padding:5rem 3rem}
+.section-center{text-align:center;max-width:700px;margin:0 auto 3.5rem}
+.section-tag{font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem}
+.section h2{font-family:var(--font);font-size:2.4rem;font-weight:700;color:var(--navy);line-height:1.2;margin-bottom:1rem}
+.section-sub{color:var(--muted);font-size:.97rem;line-height:1.7}
+
+/* MODULES */
+.modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:1100px;margin:0 auto}
+.mod-card{background:var(--card);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow);border:1px solid rgba(13,31,78,0.07);transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--c)}
+.mod-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-4px)}
+.mod-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1.2rem;background:var(--ci)}
+.mod-num{font-family:var(--font);font-size:.72rem;font-weight:600;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:.4rem}
+.mod-title{font-family:var(--font);font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.7rem}
+.mod-desc{font-size:.88rem;color:var(--muted);line-height:1.6}
+.mod-arrow{position:absolute;bottom:1.5rem;right:1.5rem;color:var(--muted);font-size:1rem;transition:transform .2s}
+.mod-card:hover .mod-arrow{transform:translateX(4px)}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:1000px;margin:0 auto}
+.feat-card{text-align:center;padding:2rem;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(13,31,78,0.05)}
+.feat-icon-wrap{width:64px;height:64px;border-radius:16px;background:rgba(14,124,134,0.1);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 1.2rem}
+.feat-title{font-family:var(--font);font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:.6rem}
+.feat-desc{font-size:.88rem;color:var(--muted);line-height:1.6}
+
+/* AUTH */
+.auth-wrap{min-height:calc(100vh - 66px);display:grid;grid-template-columns:1fr 1fr}
+.auth-left{background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;padding:4rem;position:relative;overflow:hidden}
+.auth-orb{position:absolute;border-radius:50%;opacity:.1;pointer-events:none}
+.auth-orb-1{width:400px;height:400px;background:var(--teal);top:-100px;right:-100px}
+.auth-orb-2{width:250px;height:250px;background:var(--teal-lt);bottom:-60px;left:-60px}
+.auth-left-inner{position:relative;z-index:1;text-align:center;max-width:360px}
+.auth-left h2{font-family:var(--font);font-size:2rem;font-weight:700;color:#fff;margin-bottom:1rem}
+.auth-left p{color:rgba(255,255,255,0.65);font-size:.95rem;line-height:1.7}
+.auth-features{margin-top:2rem;text-align:left;display:flex;flex-direction:column;gap:.75rem}
+.auth-feat{display:flex;align-items:center;gap:.75rem;color:rgba(255,255,255,0.7);font-size:.88rem}
+.auth-feat-dot{width:8px;height:8px;border-radius:50%;background:var(--teal-lt);flex-shrink:0}
+.auth-right{display:flex;align-items:center;justify-content:center;padding:3rem;background:var(--off)}
+.auth-card{background:var(--card);border-radius:var(--radius);padding:2.5rem;width:100%;max-width:440px;box-shadow:var(--shadow)}
+.auth-title{font-family:var(--font);font-size:1.6rem;font-weight:700;color:var(--navy);margin-bottom:.4rem}
+.auth-sub{font-size:.88rem;color:var(--muted);margin-bottom:1.8rem}
+.tabs{display:flex;border-bottom:2px solid #e8eef4;margin-bottom:2rem}
+.tab{flex:1;padding:.7rem;text-align:center;cursor:pointer;font-family:var(--font);font-size:.88rem;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.form-group{margin-bottom:1.2rem}
+.form-label{display:block;font-size:.8rem;font-weight:600;color:var(--dark);margin-bottom:.4rem;letter-spacing:.02em;text-transform:uppercase}
+.form-input{width:100%;padding:.75rem 1rem;border:1.5px solid #e0e8f0;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.93rem;color:var(--dark);outline:none;transition:border .2s;background:#fff}
+.form-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-glow)}
+.form-btn{width:100%;background:var(--teal);color:#fff;border:none;padding:.9rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.95rem;font-weight:600;cursor:pointer;transition:background .2s;margin-top:.5rem}
+.form-btn:hover{background:var(--teal-lt)}
+.form-footer{text-align:center;margin-top:1.2rem;font-size:.85rem;color:var(--muted)}
+.form-footer a{color:var(--teal);text-decoration:none;font-weight:500;cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-error{color:#ef4444;font-size:.8rem;margin-top:.3rem;display:none}
+
+/* DASHBOARD */
+.dashboard{padding:2rem 3rem;max-width:1200px;margin:0 auto}
+.dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem}
+.dash-greeting h2{font-family:var(--font);font-size:1.7rem;font-weight:700;color:var(--navy)}
+.dash-greeting p{color:var(--muted);font-size:.9rem;margin-top:.3rem}
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2.5rem}
+.ds-card{background:var(--card);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);border:1px solid rgba(13,31,78,0.06)}
+.ds-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem}
+.ds-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.ds-badge{font-size:.72rem;color:#16a34a;background:#dcfce7;padding:.2rem .6rem;border-radius:20px;font-weight:600}
+.ds-num{font-family:var(--font);font-size:2rem;font-weight:700;color:var(--navy)}
+.ds-lbl{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+.dash-surveys{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(13,31,78,0.06);overflow:hidden}
+.ds-head{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;border-bottom:1px solid #f0f4f8}
+.ds-head h3{font-family:var(--font);font-size:1.05rem;font-weight:700;color:var(--navy)}
+.survey-list{padding:.5rem 0}
+.survey-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid #f8fafc;transition:background .15s;cursor:pointer;flex-wrap:wrap;gap:.5rem}
+.survey-row:hover{background:#f8fafc}
+.survey-row:last-child{border-bottom:none}
+.sr-info h4{font-family:var(--font);font-size:.92rem;font-weight:600;color:var(--navy);margin-bottom:.2rem}
+.sr-info p{font-size:.78rem;color:var(--muted)}
+.sr-right{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.status-pill{font-size:.72rem;font-weight:600;padding:.2rem .7rem;border-radius:20px;white-space:nowrap}
+.status-active{background:#dcfce7;color:#15803d}
+.status-draft{background:#fef9c3;color:#a16207}
+.status-closed{background:#fee2e2;color:#991b1b}
+.sr-responses{font-family:var(--font);font-size:.88rem;font-weight:600;color:var(--navy);white-space:nowrap}
+.sr-actions{display:flex;gap:.4rem}
+.icon-btn{width:32px;height:32px;border-radius:6px;border:1px solid #e0e8f0;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;transition:all .2s;color:var(--muted)}
+.icon-btn:hover{border-color:var(--teal);color:var(--teal);background:rgba(14,124,134,0.05)}
+
+/* BUILDER */
+.builder-layout{display:grid;grid-template-columns:260px 1fr 250px;gap:0;min-height:calc(100vh - 66px)}
+.builder-sidebar{background:var(--navy);padding:1.5rem;border-right:1px solid rgba(255,255,255,0.08);overflow-y:auto}
+.builder-sidebar h3{font-family:var(--font);font-size:.72rem;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.12em;text-transform:uppercase;margin-bottom:1rem}
+.q-type-list{display:flex;flex-direction:column;gap:.4rem}
+.q-type-item{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-sm);padding:.65rem 1rem;cursor:pointer;display:flex;align-items:center;gap:.75rem;color:rgba(255,255,255,0.7);font-size:.85rem;font-weight:500;transition:all .2s}
+.q-type-item:hover{background:rgba(14,124,134,0.25);border-color:var(--teal);color:#fff}
+.q-type-icon{font-size:.95rem}
+.builder-main{background:var(--off);padding:2rem;overflow-y:auto}
+.builder-header{background:var(--card);border-radius:var(--radius);padding:1.5rem 2rem;margin-bottom:1.5rem;box-shadow:var(--shadow)}
+.builder-header input{border:none;font-family:var(--font);font-size:1.35rem;font-weight:700;color:var(--navy);outline:none;width:100%;background:transparent}
+.builder-header textarea{border:none;font-family:var(--font-body);font-size:.9rem;color:var(--muted);outline:none;width:100%;background:transparent;resize:none;margin-top:.5rem}
+.question-card{background:var(--card);border-radius:var(--radius);padding:1.5rem 2rem;margin-bottom:1rem;box-shadow:var(--shadow);border:2px solid transparent;transition:all .2s;position:relative}
+.question-card.selected{border-color:var(--teal)}
+.question-card:hover{box-shadow:var(--shadow-hover)}
+.q-number{font-size:.72rem;font-weight:600;color:var(--teal);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem}
+.q-text-input{border:none;font-family:var(--font);font-size:.98rem;font-weight:600;color:var(--navy);outline:none;width:100%;background:transparent;margin-bottom:1rem}
+.q-options{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
+.q-option{display:flex;align-items:center;gap:.75rem}
+.q-option-circle{width:18px;height:18px;border-radius:50%;border:2px solid #c8d8e8;flex-shrink:0}
+.q-option-input{flex:1;border:none;border-bottom:1px solid #e8f0f8;font-family:var(--font-body);font-size:.88rem;color:var(--dark);padding:.3rem 0;outline:none;background:transparent}
+.q-option-input:focus{border-bottom-color:var(--teal)}
+.add-option{background:none;border:none;color:var(--teal);font-family:var(--font);font-size:.82rem;font-weight:500;cursor:pointer;padding:.3rem 0;margin-top:.3rem}
+.q-delete{position:absolute;top:1rem;right:1rem;background:none;border:1px solid #e8f0f8;border-radius:6px;padding:.25rem .5rem;color:var(--muted);cursor:pointer;font-size:.78rem;transition:all .2s}
+.q-delete:hover{border-color:#fca5a5;color:#ef4444}
+.add-q-btn{width:100%;border:2px dashed #c8d8e8;border-radius:var(--radius);padding:1.2rem;background:transparent;color:var(--muted);font-family:var(--font);font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s;margin-top:.5rem}
+.add-q-btn:hover{border-color:var(--teal);color:var(--teal);background:rgba(14,124,134,0.04)}
+.builder-props{background:var(--card);border-left:1px solid #e8f0f8;padding:1.5rem;overflow-y:auto}
+.props-title{font-family:var(--font);font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem}
+.prop-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid #f0f4f8}
+.prop-row:last-child{border:none}
+.prop-lbl{font-size:.83rem;color:var(--dark)}
+.toggle{width:38px;height:22px;background:#e0e8f0;border-radius:20px;position:relative;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
+.toggle.on{background:var(--teal)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle.on::after{transform:translateX(16px)}
+.publish-btn{width:100%;background:var(--teal);color:#fff;border:none;padding:.85rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.9rem;font-weight:600;cursor:pointer;margin-top:1.5rem;transition:all .2s}
+.publish-btn:hover{background:var(--teal-lt);transform:translateY(-1px)}
+
+/* RESPONSES */
+.responses-wrap{padding:2rem 3rem;max-width:1100px;margin:0 auto}
+.resp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.resp-header h2{font-family:var(--font);font-size:1.6rem;font-weight:700;color:var(--navy)}
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;margin-bottom:2rem}
+.chart-card{background:var(--card);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);border:1px solid rgba(13,31,78,0.06)}
+.chart-card h4{font-family:var(--font);font-size:.9rem;font-weight:600;color:var(--navy);margin-bottom:1.2rem}
+.bar-chart{display:flex;flex-direction:column;gap:.7rem}
+.bar-item{display:flex;align-items:center;gap:.75rem}
+.bar-label{font-size:.8rem;color:var(--dark);min-width:120px}
+.bar-track{flex:1;background:#f0f4f8;border-radius:20px;height:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:20px;background:var(--teal);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bar-pct{font-family:var(--font);font-size:.78rem;font-weight:600;color:var(--teal);min-width:36px;text-align:right}
+.donut-wrap{display:flex;align-items:center;gap:2rem}
+.donut-legend{display:flex;flex-direction:column;gap:.5rem}
+.dl-item{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--dark)}
+.dl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.resp-table{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(13,31,78,0.06);overflow:hidden}
+.resp-table table{width:100%;border-collapse:collapse}
+.resp-table th{background:#f8fafc;padding:.85rem 1.5rem;text-align:left;font-family:var(--font);font-size:.75rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.resp-table td{padding:.85rem 1.5rem;border-top:1px solid #f0f4f8;font-size:.87rem;color:var(--dark)}
+.resp-table tr:hover td{background:#fafbfc}
+
+/* DISTRIBUTION */
+.dist-wrap{padding:2rem 3rem;max-width:900px;margin:0 auto}
+.link-box{background:var(--card);border:1.5px solid var(--teal);border-radius:var(--radius-sm);padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;box-shadow:var(--shadow)}
+.link-url{flex:1;font-family:var(--font-mono);font-size:.85rem;color:var(--dark);word-break:break-all}
+.copy-btn{background:var(--teal);color:#fff;border:none;padding:.5rem 1.2rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s;flex-shrink:0}
+.copy-btn:hover{background:var(--teal-lt)}
+.share-channels{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem}
+.channel-card{background:var(--card);border:1.5px solid #e0e8f0;border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer;transition:all .25s}
+.channel-card:hover{border-color:var(--teal);box-shadow:var(--shadow);transform:translateY(-2px)}
+.channel-icon{font-size:1.8rem;margin-bottom:.7rem}
+.channel-name{font-family:var(--font);font-size:.88rem;font-weight:600;color:var(--navy);margin-bottom:.25rem}
+.channel-desc{font-size:.75rem;color:var(--muted)}
+
+/* FILL SURVEY */
+.fill-survey-container{max-width:680px;margin:0 auto;padding:3rem 1.5rem}
+.fill-header{background:var(--navy);border-radius:var(--radius) var(--radius) 0 0;padding:2.5rem 2.5rem 1.8rem}
+.fill-progress-bar{height:6px;background:rgba(255,255,255,0.2);border-radius:3px;margin-bottom:1.5rem;overflow:hidden}
+.fill-progress-fill{height:100%;background:var(--teal-lt);border-radius:3px;transition:width .4s ease;width:0%}
+.fill-question{background:#fff;padding:1.8rem 2.5rem;border-bottom:1px solid #f0f4f8}
+.fill-question:last-child{border-bottom:none}
+.fill-q-text{font-family:var(--font);font-size:1rem;font-weight:600;color:var(--navy);margin-bottom:1.2rem;line-height:1.5}
+.fill-option{display:flex;align-items:center;gap:.75rem;margin-bottom:.65rem;cursor:pointer;padding:.5rem .75rem;border-radius:8px;transition:background .15s;font-size:.93rem;color:var(--dark)}
+.fill-option:hover{background:#f8fafc}
+.fill-option input[type=radio]{accent-color:var(--teal);width:16px;height:16px}
+.fill-submit-btn{width:100%;background:var(--teal);color:#fff;border:none;padding:1rem;font-family:var(--font);font-size:.95rem;font-weight:600;cursor:pointer;border-radius:0 0 var(--radius) var(--radius);transition:background .2s}
+.fill-submit-btn:hover{background:var(--teal-lt)}
+.fill-text-input{width:100%;border:none;border-bottom:1.5px solid #e0e8f0;padding:.5rem 0;font-family:var(--font-body);font-size:.92rem;outline:none;background:transparent;color:var(--dark)}
+.fill-text-input:focus{border-bottom-color:var(--teal)}
+.fill-textarea{width:100%;border:1.5px solid #e0e8f0;border-radius:8px;padding:.75rem;font-family:var(--font-body);font-size:.9rem;resize:vertical;height:90px;outline:none;color:var(--dark)}
+.fill-textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-glow)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(7,21,46,0.6);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:var(--radius);padding:2.5rem;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(13,31,78,0.3);animation:popIn .25s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-box h3{font-family:var(--font);font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:.5rem}
+.modal-box p{font-size:.9rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6}
+.modal-actions{display:flex;gap:.75rem;justify-content:flex-end}
+.modal-cancel{background:transparent;border:1.5px solid #e0e8f0;color:var(--muted);padding:.6rem 1.3rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.85rem;cursor:pointer}
+.modal-confirm{background:var(--teal);color:#fff;border:none;padding:.6rem 1.5rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer}
+
+/* QR CODE MODAL */
+.qr-modal{text-align:center}
+.qr-code-display{background:#f8fafc;border-radius:12px;padding:2rem;margin:1.5rem 0;display:inline-block}
+
+/* TOAST */
+.alert{position:fixed;bottom:2rem;right:2rem;background:var(--navy);color:#fff;padding:.9rem 1.5rem;border-radius:var(--radius-sm);font-size:.88rem;box-shadow:0 4px 20px rgba(0,0,0,0.25);z-index:999;opacity:0;transform:translateY(12px);transition:all .3s;border-left:3px solid var(--teal-lt);max-width:320px}
+.alert.show{opacity:1;transform:translateY(0)}
+.alert.error{border-left-color:#ef4444}
+
+/* STARS */
+.star-row{display:flex;gap:.4rem;margin-top:.5rem}
+.star{font-size:1.4rem;color:#e0e8f0;cursor:pointer;transition:color .15s}
+.star.lit{color:#f59e0b}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem;color:var(--muted)}
+.empty-state .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.5}
+.empty-state p{font-size:.95rem}
+
+/* SURVEY TAKEN SUCCESS */
+.success-screen{text-align:center;padding:4rem 2rem;background:#fff;border-radius:0 0 var(--radius) var(--radius)}
+.success-icon{font-size:4rem;margin-bottom:1rem}
+.success-screen h2{font-family:var(--font);font-size:1.6rem;font-weight:700;color:var(--navy);margin-bottom:.5rem}
+.success-screen p{color:var(--muted);font-size:.95rem}
+
+/* DISTRIBUTION SETTINGS */
+.dist-section{background:var(--card);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
+.dist-section h3{font-family:var(--font);font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1.2rem}
+
+/* SURVEY LINK MODAL for fill */
+.survey-link-card{background:rgba(14,124,134,0.08);border:1.5px solid rgba(14,124,134,0.3);border-radius:var(--radius-sm);padding:1rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;cursor:pointer;transition:all .2s}
+.survey-link-card:hover{background:rgba(14,124,134,0.15);border-color:var(--teal)}
+.slc-title{font-family:var(--font);font-size:.9rem;font-weight:600;color:var(--navy)}
+.slc-url{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);margin-top:.2rem}
+.slc-open{font-size:.8rem;color:var(--teal);font-weight:600;white-space:nowrap}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.hero-inner>*{animation:fadeUp .7s ease both}
+.hero-inner>*:nth-child(1){animation-delay:.1s}
+.hero-inner>*:nth-child(2){animation-delay:.2s}
+.hero-inner>*:nth-child(3){animation-delay:.3s}
+.hero-inner>*:nth-child(4){animation-delay:.4s}
+
+footer{background:var(--navy-dark);padding:2.5rem 3rem;text-align:center}
+footer p{color:rgba(255,255,255,0.35);font-size:.82rem;line-height:1.6}
+footer span{color:var(--teal-lt)}
+
+@media(max-width:960px){
+  nav{padding:0 1.2rem}
+  .nav-links{display:none}
+  .hero h1{font-size:2.4rem}
+  .auth-wrap{grid-template-columns:1fr}
+  .auth-left{display:none}
+  .builder-layout{grid-template-columns:1fr}
+  .builder-sidebar,.builder-props{display:none}
+  .dash-stats{grid-template-columns:repeat(2,1fr)}
+  .features-grid{grid-template-columns:1fr;gap:1rem}
+  .section{padding:3rem 1.5rem}
+  .dashboard,.responses-wrap,.dist-wrap{padding:1.5rem}
+  .fill-survey-container{padding:1rem}
+}
+@media(max-width:600px){
+  .dash-stats{grid-template-columns:1fr 1fr}
+  .charts-grid{grid-template-columns:1fr}
+  .share-channels{grid-template-columns:1fr 1fr}
+  .survey-row{flex-direction:column;align-items:flex-start}
+  .stats{gap:2.5rem;padding:2rem 1.5rem}
+  .modules-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-dot"></div>SurveyFlow
+  </div>
+  <ul class="nav-links" id="main-nav">
+    <li><a onclick="showPage('home')">Home</a></li>
+    <li><a onclick="requireAuth('dashboard')">Dashboard</a></li>
+    <li><a onclick="requireAuth('builder')">Create Survey</a></li>
+    <li><a onclick="requireAuth('responses')">Responses</a></li>
+    <li><a onclick="requireAuth('distribution')">Share</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-user" id="nav-user-info">
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <span id="nav-username">User</span>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+    <button class="nav-cta" id="nav-cta-btn" onclick="showPage('auth')">Get Started</button>
+  </div>
+</nav>
+
+<!-- ═══ HOME PAGE ═══ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-inner">
+      <div class="hero-badge">RTRP Project · CSE Department</div>
+      <h1>Create Surveys That <span>Drive Insights</span></h1>
+      <p>Build beautiful surveys and polls in minutes. Collect responses, analyze results, and make data-driven decisions — all in one platform.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="requireAuth('builder')">Create Free Survey →</button>
+        <button class="btn-outline" onclick="requireAuth('dashboard')">View Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-item"><div class="stat-num" id="stat-surveys">5</div><div class="stat-lbl">Surveys Created</div></div>
+    <div class="stat-item"><div class="stat-num">∞</div><div class="stat-lbl">Responses</div></div>
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl">Question Types</div></div>
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-lbl">Secure</div></div>
+  </div>
+
+  <div class="section" style="background:#fff">
+    <div class="section-center">
+      <div class="section-tag">System Architecture</div>
+      <h2>Five Powerful Modules</h2>
+      <p class="section-sub">Each module handles a specific function — from user authentication to detailed analytics.</p>
+    </div>
+    <div class="modules-grid">
+      <div class="mod-card" style="--c:#1565C0;--ci:rgba(21,101,192,0.1)" onclick="showPage('auth')">
+        <div class="mod-icon">🔐</div><div class="mod-num">Module 01</div>
+        <div class="mod-title">User Authentication</div>
+        <div class="mod-desc">Secure login & registration, session management, and credential validation to protect user data.</div>
+        <span class="mod-arrow">→</span>
+      </div>
+      <div class="mod-card" style="--c:#0E7C86;--ci:rgba(14,124,134,0.1)" onclick="requireAuth('builder')">
+        <div class="mod-icon">📋</div><div class="mod-num">Module 02</div>
+        <div class="mod-title">Survey Creation</div>
+        <div class="mod-desc">Build surveys with MCQ, rating, and text questions. Edit, reorder, and customize to your needs.</div>
+        <span class="mod-arrow">→</span>
+      </div>
+      <div class="mod-card" style="--c:#6A1B9A;--ci:rgba(106,27,154,0.1)" onclick="requireAuth('distribution')">
+        <div class="mod-icon">📡</div><div class="mod-num">Module 03</div>
+        <div class="mod-title">Survey Distribution</div>
+        <div class="mod-desc">Generate unique links and share across email, social media, and messaging platforms instantly.</div>
+        <span class="mod-arrow">→</span>
+      </div>
+      <div class="mod-card" style="--c:#2E7D32;--ci:rgba(46,125,50,0.1)" onclick="requireAuth('fill')">
+        <div class="mod-icon">✍️</div><div class="mod-num">Module 04</div>
+        <div class="mod-title">Response Collection</div>
+        <div class="mod-desc">Real-time data capture, secure database storage, and multi-user concurrent submission support.</div>
+        <span class="mod-arrow">→</span>
+      </div>
+      <div class="mod-card" style="--c:#C62828;--ci:rgba(198,40,40,0.1)" onclick="requireAuth('responses')">
+        <div class="mod-icon">📊</div><div class="mod-num">Module 05</div>
+        <div class="mod-title">Analysis & Reporting</div>
+        <div class="mod-desc">Visual charts, graphs, and summary reports that turn raw responses into actionable insights.</div>
+        <span class="mod-arrow">→</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-center">
+      <div class="section-tag">Why SurveyFlow</div>
+      <h2>Everything You Need</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card"><div class="feat-icon-wrap">⚡</div><div class="feat-title">Lightning Fast Setup</div><div class="feat-desc">Create and launch a survey in under 3 minutes with our intuitive drag-and-drop builder.</div></div>
+      <div class="feat-card"><div class="feat-icon-wrap">🔒</div><div class="feat-title">Bank-Level Security</div><div class="feat-desc">All data is encrypted at rest and in transit. Full authentication ensures only authorized access.</div></div>
+      <div class="feat-card"><div class="feat-icon-wrap">📈</div><div class="feat-title">Real-Time Analytics</div><div class="feat-desc">Watch responses pour in live and see charts update instantly with every new submission.</div></div>
+    </div>
+  </div>
+
+  <footer><p>SurveyFlow · <span>Online Survey & Poll Creator</span> · RTRP Project Review 1 · Dept. of CSE<br>Under the supervision of Mr. M. Venkateshwarlu</p></footer>
+</div>
+
+<!-- ═══ AUTH PAGE ═══ -->
+<div id="page-auth" class="page">
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div class="auth-orb auth-orb-1"></div>
+      <div class="auth-orb auth-orb-2"></div>
+      <div class="auth-left-inner">
+        <div style="font-size:3rem;margin-bottom:1rem">🔐</div>
+        <h2>Secure Access to SurveyFlow</h2>
+        <p>Join users creating impactful surveys and collecting meaningful data.</p>
+        <div class="auth-features">
+          <div class="auth-feat"><div class="auth-feat-dot"></div>Encrypted credential storage</div>
+          <div class="auth-feat"><div class="auth-feat-dot"></div>Session management & auto-logout</div>
+          <div class="auth-feat"><div class="auth-feat-dot"></div>Role-based access control</div>
+          <div class="auth-feat"><div class="auth-feat-dot"></div>HTTPS-secured communication</div>
+        </div>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card">
+        <div class="auth-title">Welcome to SurveyFlow</div>
+        <div class="auth-sub">Sign in or create your account to continue</div>
+        <div class="tabs">
+          <div class="tab active" id="tab-login" onclick="switchTab('login')">Login</div>
+          <div class="tab" id="tab-register" onclick="switchTab('register')">Register</div>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form">
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input class="form-input" type="text" placeholder="Enter your username" id="login-user"/>
+            <div class="form-error" id="login-user-err">Please enter your username</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" placeholder="Enter your password" id="login-pass"/>
+            <div class="form-error" id="login-pass-err">Incorrect username or password</div>
+          </div>
+          <button class="form-btn" onclick="doLogin()">Sign In →</button>
+          <div class="form-footer">Don't have an account? <a onclick="switchTab('register')">Register here</a></div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" style="display:none">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input class="form-input" type="text" placeholder="First name" id="reg-first"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input class="form-input" type="text" placeholder="Last name" id="reg-last"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" type="email" placeholder="you@example.com" id="reg-email"/>
+            <div class="form-error" id="reg-email-err">Enter a valid email address</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input class="form-input" type="text" placeholder="Choose a username" id="reg-user"/>
+            <div class="form-error" id="reg-user-err">Username already taken</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" placeholder="Min. 8 characters" id="reg-pass"/>
+            <div class="form-error" id="reg-pass-err">Password must be at least 8 characters</div>
+          </div>
+          <button class="form-btn" onclick="doRegister()">Create Account →</button>
+          <div class="form-footer">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD PAGE ═══ -->
+<div id="page-dashboard" class="page">
+  <div class="dashboard">
+    <div class="dash-header">
+      <div class="dash-greeting">
+        <h2 id="dash-greeting-text">Good Morning</h2>
+        <p id="dash-greeting-sub">Here's what's happening with your surveys today.</p>
+      </div>
+      <button class="btn-primary" onclick="newSurvey()">+ New Survey</button>
+    </div>
+
+    <div class="dash-stats">
+      <div class="ds-card">
+        <div class="ds-card-top">
+          <div class="ds-icon" style="background:rgba(14,124,134,0.1)">📋</div>
+          <div class="ds-badge" id="dash-badge-surveys">0 surveys</div>
+        </div>
+        <div class="ds-num" id="dash-total-surveys">0</div>
+        <div class="ds-lbl">Total Surveys</div>
+      </div>
+      <div class="ds-card">
+        <div class="ds-card-top">
+          <div class="ds-icon" style="background:rgba(21,101,192,0.1)">✍️</div>
+          <div class="ds-badge" id="dash-badge-resp">0 total</div>
+        </div>
+        <div class="ds-num" id="dash-total-responses">0</div>
+        <div class="ds-lbl">Total Responses</div>
+      </div>
+      <div class="ds-card">
+        <div class="ds-card-top">
+          <div class="ds-icon" style="background:rgba(46,125,50,0.1)">⚡</div>
+          <div class="ds-badge" id="dash-badge-active">active</div>
+        </div>
+        <div class="ds-num" id="dash-active-surveys">0</div>
+        <div class="ds-lbl">Active Surveys</div>
+      </div>
+      <div class="ds-card">
+        <div class="ds-card-top">
+          <div class="ds-icon" style="background:rgba(198,40,40,0.1)">📈</div>
+          <div class="ds-badge">completion</div>
+        </div>
+        <div class="ds-num" id="dash-completion">68%</div>
+        <div class="ds-lbl">Completion Rate</div>
+      </div>
+    </div>
+
+    <div class="dash-surveys">
+      <div class="ds-head">
+        <h3>Your Surveys</h3>
+        <button class="btn-primary" style="padding:.5rem 1rem;font-size:.82rem" onclick="newSurvey()">+ Create</button>
+      </div>
+      <div class="survey-list" id="dashboard-survey-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SURVEY BUILDER ═══ -->
+<div id="page-builder" class="page">
+  <div class="builder-layout">
+    <div class="builder-sidebar">
+      <h3>Add Questions</h3>
+      <div class="q-type-list">
+        <div class="q-type-item" onclick="addQuestion('mcq')"><span class="q-type-icon">🔘</span>Multiple Choice</div>
+        <div class="q-type-item" onclick="addQuestion('text')"><span class="q-type-icon">✍️</span>Short Text</div>
+        <div class="q-type-item" onclick="addQuestion('rating')"><span class="q-type-icon">⭐</span>Rating Scale</div>
+        <div class="q-type-item" onclick="addQuestion('yesno')"><span class="q-type-icon">✅</span>Yes / No</div>
+        <div class="q-type-item" onclick="addQuestion('dropdown')"><span class="q-type-icon">📋</span>Dropdown</div>
+        <div class="q-type-item" onclick="addQuestion('para')"><span class="q-type-icon">📝</span>Paragraph</div>
+      </div>
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:1.5rem 0">
+      <h3>Survey Info</h3>
+      <div style="font-size:.8rem;color:rgba(255,255,255,0.4);line-height:1.7">
+        Click any question to edit it. Use the panel on the right to configure settings. Press Publish to save.
+      </div>
+    </div>
+
+    <div class="builder-main">
+      <div class="builder-header">
+        <input id="survey-title" placeholder="Untitled Survey" value=""/>
+        <textarea id="survey-desc" rows="2" placeholder="Add a description (optional)..."></textarea>
+      </div>
+      <div id="questions-container"></div>
+      <button class="add-q-btn" onclick="addQuestion('mcq')">+ Click here or use the panel to add a question</button>
+    </div>
+
+    <div class="builder-props">
+      <div class="props-title">Survey Settings</div>
+      <div class="prop-row"><span class="prop-lbl">Required by default</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="prop-row"><span class="prop-lbl">Show progress bar</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="prop-row"><span class="prop-lbl">Allow multiple submissions</span><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+      <div class="prop-row"><span class="prop-lbl">Shuffle questions</span><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+      <div class="prop-row"><span class="prop-lbl">Collect email addresses</span><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+      <hr style="border:none;border-top:1px solid #f0f4f8;margin:1rem 0">
+      <div class="props-title">Theme</div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+        <div onclick="setTheme('#0E7C86')" style="width:28px;height:28px;border-radius:50%;background:#0E7C86;border:3px solid #0E7C86;cursor:pointer"></div>
+        <div onclick="setTheme('#1565C0')" style="width:28px;height:28px;border-radius:50%;background:#1565C0;cursor:pointer;border:2px solid transparent"></div>
+        <div onclick="setTheme('#6A1B9A')" style="width:28px;height:28px;border-radius:50%;background:#6A1B9A;cursor:pointer;border:2px solid transparent"></div>
+        <div onclick="setTheme('#C62828')" style="width:28px;height:28px;border-radius:50%;background:#C62828;cursor:pointer;border:2px solid transparent"></div>
+        <div onclick="setTheme('#2E7D32')" style="width:28px;height:28px;border-radius:50%;background:#2E7D32;cursor:pointer;border:2px solid transparent"></div>
+        <div onclick="setTheme('#0D1F4E')" style="width:28px;height:28px;border-radius:50%;background:#0D1F4E;cursor:pointer;border:2px solid transparent"></div>
+      </div>
+      <button class="publish-btn" onclick="publishSurvey()">🚀 Publish Survey</button>
+      <button style="width:100%;background:transparent;border:1px solid #e0e8f0;color:var(--muted);padding:.7rem;border-radius:var(--radius-sm);font-family:var(--font);font-size:.85rem;cursor:pointer;margin-top:.5rem;transition:all .2s" onclick="previewSurvey()">👁 Preview</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FILL SURVEY ═══ -->
+<div id="page-fill" class="page" style="background:var(--off)">
+  <div class="fill-survey-container">
+    <div class="fill-header">
+      <div class="fill-progress-bar"><div class="fill-progress-fill" id="fill-progress"></div></div>
+      <h1 id="fill-survey-title" style="font-family:var(--font);font-size:1.6rem;color:#fff;font-weight:700;margin-bottom:.5rem">Survey</h1>
+      <p id="fill-survey-desc" style="color:rgba(255,255,255,0.6);font-size:.9rem"></p>
+      <p style="color:rgba(255,255,255,0.4);font-size:.75rem;margin-top:.8rem">* All fields are required</p>
+    </div>
+    <div id="fill-questions"></div>
+    <button class="fill-submit-btn" onclick="submitSurvey()">Submit Response →</button>
+  </div>
+</div>
+
+<!-- ═══ RESPONSES PAGE ═══ -->
+<div id="page-responses" class="page">
+  <div class="responses-wrap">
+    <div class="resp-header">
+      <div>
+        <h2 id="resp-page-title">📊 Responses</h2>
+        <p style="color:var(--muted);font-size:.88rem;margin-top:.3rem" id="resp-page-sub">Select a survey to view responses</p>
+      </div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <select class="form-input" style="width:auto;min-width:200px" id="resp-survey-select" onchange="loadResponses()">
+          <option value="">-- Select a Survey --</option>
+        </select>
+        <button class="icon-btn" style="width:auto;padding:.5rem 1rem;font-size:.82rem" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn-primary" style="font-size:.85rem" onclick="showPage('distribution')">Share Survey →</button>
+      </div>
+    </div>
+    <div id="responses-content">
+      <div class="empty-state"><div class="empty-icon">📊</div><p>Select a survey above to view its analytics and responses.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DISTRIBUTION PAGE ═══ -->
+<div id="page-distribution" class="page">
+  <div class="dist-wrap">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
+      <button onclick="showPage('dashboard')" style="background:none;border:1px solid #e0e8f0;border-radius:var(--radius-sm);padding:.5rem .9rem;cursor:pointer;color:var(--muted);font-size:.85rem;font-family:var(--font)">← Back</button>
+      <div>
+        <h2 style="font-family:var(--font);font-size:1.6rem;font-weight:700;color:var(--navy)">Share Your Survey</h2>
+        <p style="color:var(--muted);font-size:.88rem;margin-top:.2rem" id="dist-survey-name">Select a survey to share</p>
+      </div>
+    </div>
+
+    <!-- Survey Selector -->
+    <div class="dist-section">
+      <h3>📋 Select Survey to Share</h3>
+      <select class="form-input" id="dist-survey-select" onchange="updateDistribution()">
+        <option value="">-- Choose a Survey --</option>
+      </select>
+    </div>
+
+    <!-- Link Box -->
+    <div class="dist-section" id="dist-link-section" style="display:none">
+      <h3>📎 Unique Survey Link</h3>
+      <div class="link-box" style="margin-bottom:1rem">
+        <span class="link-url" id="dist-link-url">—</span>
+        <button class="copy-btn" onclick="copyLink()">Copy Link</button>
+      </div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <div style="background:#f8fafc;border-radius:8px;padding:.7rem 1.1rem;font-size:.8rem;color:var(--muted)" id="dist-visit-count">🔗 0 responses</div>
+        <div style="background:#f8fafc;border-radius:8px;padding:.7rem 1.1rem;font-size:.8rem;color:var(--muted)">📅 Expires: Never</div>
+        <div style="background:#dcfce7;border-radius:8px;padding:.7rem 1.1rem;font-size:.8rem;color:#15803d;font-weight:600">🟢 Active</div>
+      </div>
+      <!-- Clickable link to open the fill form -->
+      <div style="margin-top:1.2rem">
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:.7rem">👇 Share this link — respondents click it to fill out your survey:</p>
+        <div class="survey-link-card" onclick="openSurveyToFill()">
+          <div>
+            <div class="slc-title" id="dist-slc-title">Survey Name</div>
+            <div class="slc-url" id="dist-slc-url">—</div>
+          </div>
+          <span class="slc-open">Open & Fill →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Channels -->
+    <div class="dist-section" id="dist-channels-section" style="display:none">
+      <h3>📤 Share Channels</h3>
+      <div class="share-channels">
+        <div class="channel-card" onclick="shareViaEmail()">
+          <div class="channel-icon">📧</div>
+          <div class="channel-name">Email</div>
+          <div class="channel-desc">Send to participants</div>
+        </div>
+        <div class="channel-card" onclick="shareViaWhatsApp()">
+          <div class="channel-icon">💬</div>
+          <div class="channel-name">WhatsApp</div>
+          <div class="channel-desc">Share in groups</div>
+        </div>
+        <div class="channel-card" onclick="shareViaTwitter()">
+          <div class="channel-icon">🐦</div>
+          <div class="channel-name">Twitter / X</div>
+          <div class="channel-desc">Post to followers</div>
+        </div>
+        <div class="channel-card" onclick="shareViaLinkedIn()">
+          <div class="channel-icon">💼</div>
+          <div class="channel-name">LinkedIn</div>
+          <div class="channel-desc">Share professionally</div>
+        </div>
+        <div class="channel-card" onclick="showQRCode()">
+          <div class="channel-icon">📱</div>
+          <div class="channel-name">QR Code</div>
+          <div class="channel-desc">Physical distribution</div>
+        </div>
+        <div class="channel-card" onclick="copyEmbed()">
+          <div class="channel-icon">🖥</div>
+          <div class="channel-name">Embed</div>
+          <div class="channel-desc">Add to your website</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distribution Settings -->
+    <div class="dist-section" id="dist-settings-section" style="display:none">
+      <h3>⚙️ Distribution Settings</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group">
+          <label class="form-label">Response Limit</label>
+          <input class="form-input" type="number" placeholder="No limit" id="dist-response-limit"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Expiry Date</label>
+          <input class="form-input" type="date" id="dist-expiry"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Allow Anonymous</label>
+          <select class="form-input" id="dist-anonymous">
+            <option>Yes (default)</option>
+            <option>No – require login</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Redirect after submit</label>
+          <input class="form-input" placeholder="https://example.com" id="dist-redirect"/>
+        </div>
+      </div>
+      <button class="form-btn" style="width:auto;padding:.75rem 2rem;margin-top:.5rem" onclick="saveDistSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+<!-- QR Code Modal -->
+<div class="modal-overlay" id="qr-modal">
+  <div class="modal-box qr-modal">
+    <h3>📱 QR Code</h3>
+    <p>Scan this code with any phone camera to open the survey.</p>
+    <div class="qr-code-display">
+      <svg width="160" height="160" viewBox="0 0 160 160" style="display:block">
+        <!-- QR Pattern simulation -->
+        <rect width="160" height="160" fill="white"/>
+        <rect x="10" y="10" width="50" height="50" fill="none" stroke="#0D1F4E" stroke-width="4"/>
+        <rect x="20" y="20" width="30" height="30" fill="#0D1F4E"/>
+        <rect x="100" y="10" width="50" height="50" fill="none" stroke="#0D1F4E" stroke-width="4"/>
+        <rect x="110" y="20" width="30" height="30" fill="#0D1F4E"/>
+        <rect x="10" y="100" width="50" height="50" fill="none" stroke="#0D1F4E" stroke-width="4"/>
+        <rect x="20" y="110" width="30" height="30" fill="#0D1F4E"/>
+        <rect x="70" y="10" width="20" height="10" fill="#0D1F4E"/>
+        <rect x="70" y="30" width="10" height="10" fill="#0D1F4E"/>
+        <rect x="80" y="40" width="10" height="20" fill="#0D1F4E"/>
+        <rect x="70" y="60" width="20" height="10" fill="#0D1F4E"/>
+        <rect x="70" y="80" width="10" height="10" fill="#0D1F4E"/>
+        <rect x="85" y="75" width="10" height="10" fill="#0D1F4E"/>
+        <rect x="100" y="70" width="10" height="10" fill="#0D1F4E"/>
+        <rect x="115" y="70" width="10" height="10" fill="#0D1F4E"/>
+        <rect x="130" y="70" width="20" height="10" fill="#0D1F4E"/>
+        <rect x="100" y="85" width="20" height="10" fill="#0D1F4E"/>
+        <rect x="130" y="85" width="20" height="10" fill="#0D1F4E"/>
+        <rect x="10" y="70" width="10" height="20" fill="#0D1F4E"/>
+        <rect x="25" y="70" width="20" height="10" fill="#0D1F4E"/>
+        <rect x="50" y="70" width="10" height="20" fill="#0D1F4E"/>
+        <rect x="10" y="95" width="20" height="5" fill="#0D1F4E"/>
+        <rect x="40" y="90" width="15" height="8" fill="#0D1F4E"/>
+        <rect x="100" y="100" width="15" height="10" fill="#0D1F4E"/>
+        <rect x="125" y="100" width="10" height="10" fill="#0D1F4E"/>
+        <rect x="140" y="95" width="10" height="20" fill="#0D1F4E"/>
+        <rect x="100" y="115" width="25" height="10" fill="#0D1F4E"/>
+        <rect x="135" y="120" width="15" height="10" fill="#0D1F4E"/>
+        <rect x="100" y="130" width="10" height="20" fill="#0D1F4E"/>
+        <rect x="120" y="135" width="30" height="10" fill="#0D1F4E"/>
+        <rect x="70" y="100" width="20" height="10" fill="#0D1F4E"/>
+        <rect x="70" y="120" width="10" height="20" fill="#0D1F4E"/>
+        <rect x="80" y="130" width="15" height="10" fill="#0D1F4E"/>
+        <text x="80" y="155" text-anchor="middle" font-size="8" fill="#8CA0B5" font-family="DM Sans">surveyflow.app</text>
+      </svg>
+    </div>
+    <div class="modal-actions" style="justify-content:center;gap:1rem">
+      <button class="modal-cancel" onclick="closeModal('qr-modal')">Close</button>
+      <button class="modal-confirm" onclick="showAlert('🖼 QR Code downloaded!');closeModal(\'qr-modal\')">Download PNG</button>
+    </div>
+  </div>
+</div>
+
+<!-- Embed Modal -->
+<div class="modal-overlay" id="embed-modal">
+  <div class="modal-box">
+    <h3>🖥 Embed Code</h3>
+    <p>Copy this code and paste it into your website's HTML.</p>
+    <textarea readonly id="embed-code" style="width:100%;height:120px;background:#f8fafc;border:1.5px solid #e0e8f0;border-radius:8px;padding:1rem;font-family:var(--font-mono);font-size:.8rem;color:var(--dark);resize:none;outline:none"></textarea>
+    <div class="modal-actions" style="margin-top:1rem">
+      <button class="modal-cancel" onclick="closeModal('embed-modal')">Close</button>
+      <button class="modal-confirm" onclick="copyEmbedCode()">Copy Code</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="alert" id="alert-toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA STORE
+// ═══════════════════════════════════════════════════
+let users = []; // { username, password, firstName, lastName, email }
+let currentUser = null;
+
+let surveys = [
+  {
+    id: 'survey-1',
+    title: 'Student Feedback – Semester 2',
+    description: 'Help us improve our courses by sharing your experience this semester.',
+    status: 'active',
+    createdAt: new Date(Date.now() - 3*24*60*60*1000),
+    questions: [
+      { id: 1, type: 'mcq', text: 'How would you rate the overall quality of teaching?', options: ['Excellent', 'Good', 'Average', 'Poor'] },
+      { id: 2, type: 'yesno', text: 'Are the course materials helpful?', options: ['Yes', 'Somewhat', 'No'] },
+      { id: 3, type: 'rating', text: 'Rate the difficulty level of this semester (1–5)', options: [] },
+      { id: 4, type: 'text', text: 'What could be improved in the teaching methodology?', options: [] },
+    ],
+    responses: [
+      { answers: ['Excellent','Yes',5,'More hands-on projects.'], submittedAt: new Date(Date.now()-2*60*60*1000) },
+      { answers: ['Good','Somewhat',4,'Lab sessions should be extended.'], submittedAt: new Date(Date.now()-3*60*60*1000) },
+      { answers: ['Excellent','Yes',5,'Reference materials in regional language.'], submittedAt: new Date(Date.now()-5*60*60*1000) },
+      { answers: ['Average','No',3,'More interactive sessions.'], submittedAt: new Date(Date.now()-24*60*60*1000) },
+      { answers: ['Good','Yes',4,'Better lab equipment.'], submittedAt: new Date(Date.now()-25*60*60*1000) },
+    ]
+  },
+  {
+    id: 'survey-2',
+    title: 'Product Satisfaction Poll',
+    description: 'We value your feedback on our product.',
+    status: 'active',
+    createdAt: new Date(Date.now() - 7*24*60*60*1000),
+    questions: [
+      { id: 1, type: 'mcq', text: 'Overall, how satisfied are you with our product?', options: ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied'] },
+      { id: 2, type: 'rating', text: 'Rate the ease of use (1–5)', options: [] },
+      { id: 3, type: 'yesno', text: 'Would you recommend this product to a friend?', options: ['Yes', 'Maybe', 'No'] },
+      { id: 4, type: 'text', text: 'Any additional comments?', options: [] },
+      { id: 5, type: 'para', text: 'Describe your overall experience:', options: [] },
+    ],
+    responses: [
+      { answers: ['Very Satisfied',5,'Yes','Great product!','Excellent experience.'], submittedAt: new Date(Date.now()-1*60*60*1000) },
+      { answers: ['Satisfied',4,'Maybe','Could improve the UI.','Good overall.'], submittedAt: new Date(Date.now()-2*60*60*1000) },
+    ]
+  },
+  {
+    id: 'survey-3',
+    title: 'Employee Engagement Survey',
+    description: 'Annual employee satisfaction and engagement assessment.',
+    status: 'draft',
+    createdAt: new Date(Date.now() - 14*24*60*60*1000),
+    questions: [
+      { id: 1, type: 'rating', text: 'How would you rate your work-life balance?', options: [] },
+      { id: 2, type: 'mcq', text: 'How often do you feel recognized for your work?', options: ['Always', 'Often', 'Sometimes', 'Rarely', 'Never'] },
+    ],
+    responses: []
+  }
+];
+
+let currentSurveyId = null;
+let editingSurveyId = null;
+let qCounter = 100;
+
+// Builder questions
+let builderQuestions = [];
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) { pg.classList.add('active'); window.scrollTo(0,0); }
+
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'fill') renderFillSurvey();
+  if (id === 'distribution') renderDistributionPage();
+  if (id === 'responses') renderResponsesPage();
+  if (id === 'builder') renderBuilderPage();
+}
+
+function requireAuth(page) {
+  if (!currentUser) {
+    showAlert('⚠️ Please login first to access that page.', 'error');
+    setTimeout(() => showPage('auth'), 600);
+    return;
+  }
+  showPage(page);
+}
+
+function showAlert(msg, type='') {
+  const t = document.getElementById('alert-toast');
+  t.textContent = msg;
+  t.className = 'alert' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════
+function switchTab(which) {
+  document.getElementById('tab-login').classList.toggle('active', which === 'login');
+  document.getElementById('tab-register').classList.toggle('active', which === 'register');
+  document.getElementById('login-form').style.display = which === 'login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = which === 'register' ? 'block' : 'none';
+  clearErrors();
+}
+
+function clearErrors() {
+  document.querySelectorAll('.form-error').forEach(e => e.style.display='none');
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+function doLogin() {
+  clearErrors();
+  const username = document.getElementById('login-user').value.trim();
+  const password = document.getElementById('login-pass').value;
+
+  if (!username) { showError('login-user-err','Please enter your username.'); return; }
+  if (!password) { showError('login-pass-err','Please enter your password.'); return; }
+
+  const user = users.find(u => u.username === username && u.password === password);
+  if (!user) {
+    showError('login-pass-err','Incorrect username or password. Please try again.');
+    document.getElementById('login-pass').value = '';
+    return;
+  }
+
+  setCurrentUser(user);
+  showAlert('✅ Welcome back, ' + user.firstName + '!');
+  setTimeout(() => showPage('dashboard'), 700);
+}
+
+function doRegister() {
+  clearErrors();
+  const firstName = document.getElementById('reg-first').value.trim();
+  const lastName = document.getElementById('reg-last').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const username = document.getElementById('reg-user').value.trim();
+  const password = document.getElementById('reg-pass').value;
+
+  let valid = true;
+  if (!firstName) { showAlert('⚠️ Please enter your first name.','error'); return; }
+  if (!email || !email.includes('@')) { showError('reg-email-err','Enter a valid email address.'); valid=false; }
+  if (!username || username.length < 3) { showError('reg-user-err','Username must be at least 3 characters.'); valid=false; }
+  if (users.find(u => u.username === username)) { showError('reg-user-err','This username is already taken. Choose another.'); valid=false; }
+  if (!password || password.length < 8) { showError('reg-pass-err','Password must be at least 8 characters.'); valid=false; }
+  if (!valid) return;
+
+  const newUser = { firstName, lastName, email, username, password };
+  users.push(newUser);
+
+  setCurrentUser(newUser);
+  showAlert('🎉 Account created! Welcome, ' + username + '!');
+  setTimeout(() => showPage('dashboard'), 800);
+}
+
+function setCurrentUser(user) {
+  currentUser = user;
+  // Show user info in nav
+  document.getElementById('nav-user-info').style.display = 'flex';
+  document.getElementById('nav-cta-btn').style.display = 'none';
+  document.getElementById('nav-avatar').textContent = user.firstName.charAt(0).toUpperCase();
+  document.getElementById('nav-username').textContent = user.username;
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('nav-user-info').style.display = 'none';
+  document.getElementById('nav-cta-btn').style.display = 'block';
+  showAlert('👋 Logged out successfully.');
+  showPage('home');
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+function renderDashboard() {
+  if (!currentUser) return;
+
+  // Greeting
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+  document.getElementById('dash-greeting-text').textContent = greet + ', ' + currentUser.firstName + '! 👋';
+  document.getElementById('dash-greeting-sub').textContent = "Here's what's happening with your surveys today.";
+
+  // Stats
+  const total = surveys.length;
+  const active = surveys.filter(s => s.status === 'active').length;
+  const totalResp = surveys.reduce((acc, s) => acc + s.responses.length, 0);
+
+  document.getElementById('dash-total-surveys').textContent = total;
+  document.getElementById('dash-total-responses').textContent = totalResp.toLocaleString();
+  document.getElementById('dash-active-surveys').textContent = active;
+  document.getElementById('dash-badge-surveys').textContent = total + ' total';
+  document.getElementById('dash-badge-resp').textContent = '+' + Math.min(totalResp, 48) + ' today';
+  document.getElementById('dash-badge-active').textContent = active + ' active';
+
+  // Stat update on home page
+  const statEl = document.getElementById('stat-surveys');
+  if (statEl) statEl.textContent = total;
+
+  // Survey list
+  const list = document.getElementById('dashboard-survey-list');
+  if (!surveys.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>No surveys yet. Create your first one!</p></div>';
+    return;
+  }
+
+  list.innerHTML = surveys.map(s => {
+    const ageStr = timeAgo(s.createdAt);
+    const statusClass = s.status === 'active' ? 'status-active' : s.status === 'draft' ? 'status-draft' : 'status-closed';
+    const statusLabel = s.status.charAt(0).toUpperCase() + s.status.slice(1);
+    return `
+      <div class="survey-row" onclick="viewResponses('${s.id}')">
+        <div class="sr-info">
+          <h4>${escHtml(s.title)}</h4>
+          <p>Created ${ageStr} · ${s.questions.length} questions</p>
+        </div>
+        <div class="sr-right">
+          <span class="status-pill ${statusClass}">${statusLabel}</span>
+          <span class="sr-responses">${s.responses.length} response${s.responses.length !== 1 ? 's' : ''}</span>
+          <div class="sr-actions">
+            <button class="icon-btn" title="Edit" onclick="event.stopPropagation();editSurvey('${s.id}')">✏️</button>
+            <button class="icon-btn" title="Fill/Preview" onclick="event.stopPropagation();fillSurvey('${s.id}')">✍️</button>
+            <button class="icon-btn" title="Share" onclick="event.stopPropagation();shareSurvey('${s.id}')">📡</button>
+            <button class="icon-btn" title="Analytics" onclick="event.stopPropagation();viewResponses('${s.id}')">📊</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function viewResponses(id) {
+  currentSurveyId = id;
+  showPage('responses');
+}
+
+function shareSurvey(id) {
+  currentSurveyId = id;
+  showPage('distribution');
+}
+
+function fillSurvey(id) {
+  currentSurveyId = id;
+  showPage('fill');
+}
+
+function editSurvey(id) {
+  editingSurveyId = id;
+  showPage('builder');
+}
+
+function newSurvey() {
+  editingSurveyId = null;
+  showPage('builder');
+}
+
+// ═══════════════════════════════════════════════════
+// SURVEY BUILDER
+// ═══════════════════════════════════════════════════
+function renderBuilderPage() {
+  if (editingSurveyId) {
+    const s = surveys.find(x => x.id === editingSurveyId);
+    if (s) {
+      document.getElementById('survey-title').value = s.title;
+      document.getElementById('survey-desc').value = s.description;
+      builderQuestions = JSON.parse(JSON.stringify(s.questions));
+    }
+  } else {
+    document.getElementById('survey-title').value = '';
+    document.getElementById('survey-desc').value = '';
+    builderQuestions = [];
+  }
+  renderQuestions();
+}
+
+function renderQuestions() {
+  const c = document.getElementById('questions-container');
+  c.innerHTML = '';
+  builderQuestions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'question-card';
+    div.onclick = (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+      document.querySelectorAll('.question-card').forEach(x=>x.classList.remove('selected'));
+      div.classList.add('selected');
+    };
+
+    let inner = `<div class="q-number">Question ${i+1} · ${q.type.toUpperCase()}</div>
+      <input class="q-text-input" value="${escHtml(q.text)}" placeholder="Enter your question..." oninput="builderQuestions[${i}].text=this.value"/>`;
+
+    if (q.type === 'mcq' || q.type === 'yesno' || q.type === 'dropdown') {
+      inner += '<div class="q-options">';
+      (q.options||[]).forEach((opt, oi) => {
+        inner += `<div class="q-option">
+          <div class="q-option-circle"></div>
+          <input class="q-option-input" value="${escHtml(opt)}" placeholder="Option ${oi+1}" oninput="builderQuestions[${i}].options[${oi}]=this.value"/>
+          <button onclick="builderQuestions[${i}].options.splice(${oi},1);renderQuestions()" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:.9rem;padding:0 .2rem">✕</button>
+        </div>`;
+      });
+      inner += `</div><button class="add-option" onclick="builderQuestions[${i}].options.push('Option ${(q.options||[]).length+1}');renderQuestions()">+ Add option</button>`;
+    } else if (q.type === 'rating') {
+      inner += '<div class="star-row">';
+      for (let s=1;s<=5;s++) inner += `<span class="star" style="font-size:1.4rem;color:#f59e0b">★</span>`;
+      inner += '</div><p style="font-size:.8rem;color:var(--muted);margin-top:.4rem">Respondents will select 1–5 stars</p>';
+    } else if (q.type === 'para') {
+      inner += '<textarea disabled style="width:100%;border:1px solid #e0e8f0;border-radius:6px;padding:.6rem;font-size:.88rem;color:var(--muted);resize:none;height:65px;background:#fafbfc">Long answer text area...</textarea>';
+    } else {
+      inner += '<input disabled style="width:100%;border:none;border-bottom:1px solid #e0e8f0;padding:.4rem 0;font-size:.88rem;color:var(--muted);background:transparent" placeholder="Short answer field"/>';
+    }
+
+    div.innerHTML = inner + `<button class="q-delete" onclick="deleteQ(${i})">✕ Remove</button>`;
+    c.appendChild(div);
+  });
+}
+
+function deleteQ(i) {
+  builderQuestions.splice(i, 1);
+  renderQuestions();
+}
+
+function addQuestion(type) {
+  const defaults = {
+    mcq: ['Option A','Option B','Option C'],
+    yesno: ['Yes','No'],
+    dropdown: ['Choice 1','Choice 2','Choice 3'],
+    rating: [], text: [], para: []
+  };
+  builderQuestions.push({
+    id: ++qCounter,
+    type,
+    text: '',
+    options: [...(defaults[type] || [])]
+  });
+  renderQuestions();
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.question-card');
+    const last = cards[cards.length-1];
+    if (last) { last.scrollIntoView({behavior:'smooth'}); last.classList.add('selected'); }
+  }, 60);
+}
+
+function publishSurvey() {
+  const title = document.getElementById('survey-title').value.trim();
+  const desc = document.getElementById('survey-desc').value.trim();
+
+  if (!title) { showAlert('⚠️ Please give your survey a title.','error'); return; }
+  if (builderQuestions.length === 0) { showAlert('⚠️ Add at least one question before publishing.','error'); return; }
+
+  const emptyQ = builderQuestions.find(q => !q.text.trim());
+  if (emptyQ) { showAlert('⚠️ Please fill in all question texts.','error'); return; }
+
+  if (editingSurveyId) {
+    const s = surveys.find(x => x.id === editingSurveyId);
+    if (s) {
+      s.title = title;
+      s.description = desc;
+      s.questions = JSON.parse(JSON.stringify(builderQuestions));
+      s.status = 'active';
+      showAlert('✅ Survey "' + title + '" updated and published!');
+      editingSurveyId = null;
+      setTimeout(() => showPage('dashboard'), 900);
+      return;
+    }
+  }
+
+  const newSurvey = {
+    id: 'survey-' + Date.now(),
+    title,
+    description: desc,
+    status: 'active',
+    createdAt: new Date(),
+    questions: JSON.parse(JSON.stringify(builderQuestions)),
+    responses: []
+  };
+  surveys.unshift(newSurvey);
+  currentSurveyId = newSurvey.id;
+  showAlert('🚀 "' + title + '" published! Redirecting to share...');
+  editingSurveyId = null;
+  setTimeout(() => showPage('distribution'), 1000);
+}
+
+function previewSurvey() {
+  const title = document.getElementById('survey-title').value.trim() || 'Preview Survey';
+  const desc = document.getElementById('survey-desc').value.trim();
+  // Create temp survey for preview
+  const tempId = 'preview-temp';
+  const existing = surveys.find(x => x.id === tempId);
+  const previewData = {
+    id: tempId, title, description: desc, status: 'active',
+    createdAt: new Date(), questions: JSON.parse(JSON.stringify(builderQuestions)), responses: []
+  };
+  if (existing) Object.assign(existing, previewData);
+  else surveys.push(previewData);
+  currentSurveyId = tempId;
+  showPage('fill');
+}
+
+function setTheme(color) {
+  document.documentElement.style.setProperty('--teal', color);
+  showAlert('🎨 Theme color applied!');
+}
+
+// ═══════════════════════════════════════════════════
+// FILL SURVEY
+// ═══════════════════════════════════════════════════
+function renderFillSurvey() {
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  if (!survey) {
+    document.getElementById('fill-questions').innerHTML = '<div class="empty-state" style="background:#fff;padding:3rem"><div class="empty-icon">📋</div><p>No survey selected. Go to dashboard to pick one.</p></div>';
+    return;
+  }
+
+  document.getElementById('fill-survey-title').textContent = survey.title;
+  document.getElementById('fill-survey-desc').textContent = survey.description || '';
+  document.getElementById('fill-progress').style.width = '0%';
+
+  const c = document.getElementById('fill-questions');
+  c.innerHTML = '';
+
+  survey.questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'fill-question';
+
+    let inner = `<p class="fill-q-text">${i+1}. ${escHtml(q.text)} <span style="color:#ef4444">*</span></p>`;
+
+    if (q.type === 'mcq' || q.type === 'yesno' || q.type === 'dropdown') {
+      (q.options||[]).forEach(opt => {
+        inner += `<label class="fill-option">
+          <input type="radio" name="fill-q${i}" value="${escHtml(opt)}" onchange="updateFillProgress()"/> ${escHtml(opt)}
+        </label>`;
+      });
+    } else if (q.type === 'rating') {
+      inner += `<div class="star-row" id="fill-star-${i}">`;
+      for (let s=1;s<=5;s++) {
+        inner += `<span class="star" data-qi="${i}" data-val="${s}" onclick="fillRate(this)">★</span>`;
+      }
+      inner += `</div><input type="hidden" name="fill-q${i}" id="fill-rating-val-${i}" value=""/>`;
+    } else if (q.type === 'para') {
+      inner += `<textarea class="fill-textarea" name="fill-q${i}" placeholder="Your answer..." oninput="updateFillProgress()"></textarea>`;
+    } else {
+      inner += `<input type="text" class="fill-text-input" name="fill-q${i}" placeholder="Your answer..." oninput="updateFillProgress()"/>`;
+    }
+
+    div.innerHTML = inner;
+    c.appendChild(div);
+  });
+}
+
+function fillRate(el) {
+  const qi = el.dataset.qi;
+  const val = parseInt(el.dataset.val);
+  const row = document.getElementById('fill-star-' + qi);
+  row.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('lit', i < val));
+  document.getElementById('fill-rating-val-' + qi).value = val;
+  updateFillProgress();
+}
+
+function updateFillProgress() {
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  if (!survey) return;
+  let answered = 0;
+  survey.questions.forEach((q, i) => {
+    const el = document.querySelector(`[name="fill-q${i}"]`);
+    if (el) {
+      if (el.type === 'radio') {
+        if (document.querySelector(`[name="fill-q${i}"]:checked`)) answered++;
+      } else if (el.value.trim()) answered++;
+    } else if (q.type === 'rating') {
+      const v = document.getElementById('fill-rating-val-' + i);
+      if (v && v.value) answered++;
+    }
+  });
+  const pct = survey.questions.length ? Math.round((answered / survey.questions.length) * 100) : 0;
+  document.getElementById('fill-progress').style.width = pct + '%';
+}
+
+function submitSurvey() {
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  if (!survey) return;
+
+  const answers = [];
+  let allAnswered = true;
+
+  survey.questions.forEach((q, i) => {
+    let answer = null;
+    if (q.type === 'mcq' || q.type === 'yesno' || q.type === 'dropdown') {
+      const checked = document.querySelector(`[name="fill-q${i}"]:checked`);
+      answer = checked ? checked.value : null;
+    } else if (q.type === 'rating') {
+      const v = document.getElementById('fill-rating-val-' + i);
+      answer = v ? parseInt(v.value) || null : null;
+    } else {
+      const el = document.querySelector(`[name="fill-q${i}"]`);
+      answer = el ? el.value.trim() || null : null;
+    }
+    if (!answer) allAnswered = false;
+    answers.push(answer);
+  });
+
+  if (!allAnswered) {
+    showAlert('⚠️ Please answer all questions before submitting.','error');
+    return;
+  }
+
+  // Don't store responses for preview
+  if (currentSurveyId !== 'preview-temp') {
+    survey.responses.push({ answers, submittedAt: new Date() });
+  }
+
+  // Show success
+  document.getElementById('fill-progress').style.width = '100%';
+  const qContainer = document.getElementById('fill-questions');
+  const submitBtn = document.querySelector('.fill-submit-btn');
+  if (submitBtn) submitBtn.style.display = 'none';
+
+  qContainer.innerHTML = `
+    <div class="success-screen">
+      <div class="success-icon">🎉</div>
+      <h2>Thank You!</h2>
+      <p>Your response has been successfully recorded.</p>
+      <button class="btn-primary" style="margin-top:1.5rem" onclick="showPage('home')">Back to Home</button>
+    </div>`;
+
+  showAlert('✅ Response submitted successfully!');
+}
+
+// ═══════════════════════════════════════════════════
+// RESPONSES / ANALYTICS
+// ═══════════════════════════════════════════════════
+function renderResponsesPage() {
+  // Populate survey selector
+  const sel = document.getElementById('resp-survey-select');
+  sel.innerHTML = '<option value="">-- Select a Survey --</option>' +
+    surveys.map(s => `<option value="${s.id}" ${s.id === currentSurveyId ? 'selected' : ''}>${escHtml(s.title)}</option>`).join('');
+
+  if (currentSurveyId) {
+    sel.value = currentSurveyId;
+    loadResponses();
+  }
+}
+
+function loadResponses() {
+  const sel = document.getElementById('resp-survey-select');
+  currentSurveyId = sel.value;
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  const content = document.getElementById('responses-content');
+
+  if (!survey) {
+    content.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><p>Select a survey to view analytics.</p></div>';
+    document.getElementById('resp-page-title').textContent = '📊 Responses';
+    document.getElementById('resp-page-sub').textContent = 'Select a survey to view responses';
+    return;
+  }
+
+  document.getElementById('resp-page-title').textContent = '📊 ' + survey.title;
+  document.getElementById('resp-page-sub').textContent = survey.responses.length + ' response' + (survey.responses.length!==1?'s':'') + ' collected';
+
+  if (!survey.responses.length) {
+    content.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No responses yet. Share your survey to start collecting data!</p><button class="btn-primary" style="margin-top:1rem" onclick="shareSurvey(\''+survey.id+'\')">Share Survey →</button></div>';
+    return;
+  }
+
+  // Build analytics
+  const totalResp = survey.responses.length;
+  let html = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem">
+      <div class="ds-card"><div class="ds-num">${totalResp}</div><div class="ds-lbl">Total Responses</div></div>
+      <div class="ds-card"><div class="ds-num">68%</div><div class="ds-lbl">Completion Rate</div></div>
+      <div class="ds-card"><div class="ds-num">${avgRating(survey)}</div><div class="ds-lbl">Avg. Rating</div></div>
+      <div class="ds-card"><div class="ds-num">${survey.questions.length}</div><div class="ds-lbl">Questions</div></div>
+    </div>
+    <div class="charts-grid">`;
+
+  survey.questions.forEach((q, qi) => {
+    html += `<div class="chart-card"><h4>Q${qi+1} · ${escHtml(q.text)}</h4>`;
+
+    if (q.type === 'mcq' || q.type === 'yesno' || q.type === 'dropdown') {
+      const counts = {};
+      (q.options||[]).forEach(o => counts[o] = 0);
+      survey.responses.forEach(r => {
+        if (r.answers[qi]) counts[r.answers[qi]] = (counts[r.answers[qi]]||0)+1;
+      });
+      html += '<div class="bar-chart">';
+      Object.entries(counts).forEach(([label, count]) => {
+        const pct = totalResp ? Math.round((count/totalResp)*100) : 0;
+        html += `<div class="bar-item">
+          <span class="bar-label">${escHtml(label)}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <span class="bar-pct">${pct}%</span>
+        </div>`;
+      });
+      html += '</div>';
+    } else if (q.type === 'rating') {
+      const counts = {1:0,2:0,3:0,4:0,5:0};
+      survey.responses.forEach(r => { if (r.answers[qi]) counts[r.answers[qi]]++; });
+      html += '<div class="bar-chart">';
+      [5,4,3,2,1].forEach(s => {
+        const pct = totalResp ? Math.round((counts[s]/totalResp)*100) : 0;
+        html += `<div class="bar-item">
+          <span class="bar-label">${'★'.repeat(s)}${'☆'.repeat(5-s)} (${s})</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:#f59e0b"></div></div>
+          <span class="bar-pct" style="color:#f59e0b">${pct}%</span>
+        </div>`;
+      });
+      html += '</div>';
+    } else {
+      // Text responses
+      html += '<div style="display:flex;flex-direction:column;gap:.6rem">';
+      survey.responses.slice(0,3).forEach(r => {
+        if (r.answers[qi]) {
+          html += `<div style="background:#f8fafc;border-radius:8px;padding:.8rem 1rem;font-size:.85rem;color:var(--dark);border-left:3px solid var(--teal)">"${escHtml(String(r.answers[qi]))}"</div>`;
+        }
+      });
+      if (totalResp > 3) html += `<div style="color:var(--muted);font-size:.8rem;text-align:center">+ ${totalResp-3} more responses</div>`;
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+
+  html += '</div>';
+
+  // Individual responses table
+  html += `
+    <div class="resp-table">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:1.2rem 1.5rem;border-bottom:1px solid #f0f4f8">
+        <h3 style="font-family:var(--font);font-size:1rem;font-weight:700;color:var(--navy)">Individual Responses</h3>
+        <input class="form-input" style="width:200px;padding:.45rem .9rem" placeholder="🔍 Search..." oninput="filterRespTable(this.value,'${survey.id}')"/>
+      </div>
+      <table id="resp-data-table">
+        <thead><tr><th>#</th><th>Respondent</th>
+          ${survey.questions.slice(0,3).map((q,i) => `<th>Q${i+1}</th>`).join('')}
+          <th>Submitted</th>
+        </tr></thead>
+        <tbody id="resp-tbody">
+          ${survey.responses.map((r,i) => `
+            <tr>
+              <td>${i+1}</td>
+              <td>Anonymous</td>
+              ${r.answers.slice(0,3).map(a => `<td>${a != null ? escHtml(String(a)) : '—'}</td>`).join('')}
+              <td>${timeAgo(r.submittedAt)}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  content.innerHTML = html;
+}
+
+function filterRespTable(query, surveyId) {
+  // Simple client-side filter
+  const rows = document.querySelectorAll('#resp-tbody tr');
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function avgRating(survey) {
+  let total=0, count=0;
+  survey.questions.forEach((q,qi) => {
+    if (q.type === 'rating') {
+      survey.responses.forEach(r => { if (r.answers[qi]) { total+=r.answers[qi]; count++; } });
+    }
+  });
+  return count ? (total/count).toFixed(1)+'★' : 'N/A';
+}
+
+function exportCSV() {
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  if (!survey || !survey.responses.length) { showAlert('⚠️ No responses to export.','error'); return; }
+
+  const headers = ['#', 'Submitted', ...survey.questions.map((q,i) => 'Q'+(i+1)+': '+q.text)];
+  const rows = survey.responses.map((r,i) => [
+    i+1,
+    r.submittedAt.toLocaleString(),
+    ...r.answers.map(a => a != null ? String(a) : '')
+  ]);
+
+  const csv = [headers, ...rows].map(row => row.map(cell => '"'+String(cell).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = survey.title.replace(/\s+/g,'-') + '-responses.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showAlert('📥 CSV downloaded successfully!');
+}
+
+// ═══════════════════════════════════════════════════
+// DISTRIBUTION
+// ═══════════════════════════════════════════════════
+function renderDistributionPage() {
+  const sel = document.getElementById('dist-survey-select');
+  sel.innerHTML = '<option value="">-- Choose a Survey --</option>' +
+    surveys.filter(s => s.status !== 'draft' || s.questions.length > 0).map(s =>
+      `<option value="${s.id}" ${s.id === currentSurveyId ? 'selected' : ''}>${escHtml(s.title)}</option>`
+    ).join('');
+
+  if (currentSurveyId) { sel.value = currentSurveyId; updateDistribution(); }
+  else { hideDistSections(); }
+}
+
+function hideDistSections() {
+  ['dist-link-section','dist-channels-section','dist-settings-section'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+}
+
+function updateDistribution() {
+  const sel = document.getElementById('dist-survey-select');
+  currentSurveyId = sel.value;
+  const survey = surveys.find(s => s.id === currentSurveyId);
+
+  if (!survey) { hideDistSections(); document.getElementById('dist-survey-name').textContent = 'Select a survey to share'; return; }
+
+  document.getElementById('dist-survey-name').textContent = survey.title;
+
+  const link = 'https://surveyflow.app/s/' + survey.title.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') + '-' + survey.id.slice(-4);
+  document.getElementById('dist-link-url').textContent = link;
+  document.getElementById('dist-slc-title').textContent = survey.title;
+  document.getElementById('dist-slc-url').textContent = link;
+  document.getElementById('dist-visit-count').textContent = '🔗 ' + survey.responses.length + ' response' + (survey.responses.length!==1?'s':'') + ' collected';
+
+  ['dist-link-section','dist-channels-section','dist-settings-section'].forEach(id => {
+    document.getElementById(id).style.display = 'block';
+  });
+
+  // Set embed code
+  const embedEl = document.getElementById('embed-code');
+  if (embedEl) embedEl.value = `<iframe src="${link}" width="100%" height="600" frameborder="0" style="border-radius:12px;border:1px solid #e0e8f0"></iframe>`;
+}
+
+function openSurveyToFill() {
+  if (!currentSurveyId) { showAlert('⚠️ Please select a survey first.','error'); return; }
+  showPage('fill');
+}
+
+function copyLink() {
+  const link = document.getElementById('dist-link-url').textContent;
+  if (link && link !== '—') {
+    navigator.clipboard.writeText(link).then(() => showAlert('📋 Link copied to clipboard!')).catch(() => showAlert('📋 Link copied!'));
+  }
+}
+
+function shareViaEmail() {
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  if (!survey) { showAlert('⚠️ Select a survey first.','error'); return; }
+  const link = document.getElementById('dist-link-url').textContent;
+  const subject = encodeURIComponent('Please fill out: ' + survey.title);
+  const body = encodeURIComponent('Hi,\n\nPlease take a moment to fill out our survey:\n\n' + survey.title + '\n' + link + '\n\nThank you!');
+  window.open('mailto:?subject=' + subject + '&body=' + body);
+  showAlert('📧 Email client opened!');
+}
+
+function shareViaWhatsApp() {
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  if (!survey) { showAlert('⚠️ Select a survey first.','error'); return; }
+  const link = document.getElementById('dist-link-url').textContent;
+  const text = encodeURIComponent('Hi! Please fill out this survey: ' + survey.title + ' → ' + link);
+  window.open('https://wa.me/?text=' + text, '_blank');
+  showAlert('💬 WhatsApp opened!');
+}
+
+function shareViaTwitter() {
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  if (!survey) { showAlert('⚠️ Select a survey first.','error'); return; }
+  const link = document.getElementById('dist-link-url').textContent;
+  const text = encodeURIComponent('Please fill out my survey: ' + survey.title + ' ' + link + ' #survey #feedback');
+  window.open('https://twitter.com/intent/tweet?text=' + text, '_blank');
+  showAlert('🐦 Twitter opened!');
+}
+
+function shareViaLinkedIn() {
+  const survey = surveys.find(s => s.id === currentSurveyId);
+  if (!survey) { showAlert('⚠️ Select a survey first.','error'); return; }
+  const link = document.getElementById('dist-link-url').textContent;
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(link), '_blank');
+  showAlert('💼 LinkedIn share opened!');
+}
+
+function showQRCode() {
+  if (!currentSurveyId) { showAlert('⚠️ Select a survey first.','error'); return; }
+  document.getElementById('qr-modal').classList.add('open');
+}
+
+function copyEmbed() {
+  if (!currentSurveyId) { showAlert('⚠️ Select a survey first.','error'); return; }
+  document.getElementById('embed-modal').classList.add('open');
+}
+
+function copyEmbedCode() {
+  const code = document.getElementById('embed-code').value;
+  navigator.clipboard.writeText(code).then(() => showAlert('🖥 Embed code copied!')).catch(() => showAlert('🖥 Copied!'));
+  closeModal('embed-modal');
+}
+
+function saveDistSettings() {
+  const limit = document.getElementById('dist-response-limit').value;
+  const expiry = document.getElementById('dist-expiry').value;
+  showAlert('✅ Distribution settings saved!');
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// ═══════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function timeAgo(date) {
+  if (!date) return 'unknown';
+  const diff = Math.floor((Date.now() - new Date(date)) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+  return new Date(date).toLocaleDateString();
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+renderQuestions();
+</script>
+</body>
+</html>
